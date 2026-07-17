@@ -31,22 +31,22 @@
     let collectedItems = { arduino: 0, sensor: 0, pump: 0 };
     
     const TARGET_COUNT = 5; 
-    let gameSpeed = -530; 
+    // ==========================================
+    // 🛠️ تم إبطاء السرعة هنا من -530 إلى -400 لتصبح اللعبة أسهل
+    // ==========================================
+    let gameSpeed = -400; 
     let isGameOver = false;
     let gameStarted = false; 
     let startScreenContainer, componentText;
     let playerName = "Player";
     let nextSpawnTime = 0;
 
-    // ==========================================
-    // 1️⃣ هنا قمنا بتحميل صورة كأس العالم الحقيقية
-    // ==========================================
     function preload() {
         this.load.image('iot_engineer', 'mario.png');
         this.load.image('arduino_board', 'arduino.png');     
         this.load.image('sensor_module', 'sensor.png');       
         this.load.image('water_pump', 'waterpump.webp');     
-        this.load.image('world_cup_trophy', 'world_cup.png'); // تحميل الكأس الحقيقي
+        this.load.image('world_cup_trophy', 'world_cup.png'); 
     }
 
     function create() {
@@ -87,7 +87,10 @@
 
     function handleJump() {
         if (player.body.touching.down) {
-            player.setVelocityY(-670);
+            // ==========================================
+            // 🛠️ تم تعديل قوة القفزة من -670 إلى -610 لتتناسب مع السرعة الأبطأ
+            // ==========================================
+            player.setVelocityY(-610);
             AudioSynth.playJump();
         }
     }
@@ -100,7 +103,8 @@
         
         if (time > nextSpawnTime) {
             spawnNextEntity(this);
-            nextSpawnTime = time + Phaser.Math.Between(700, 1100);
+            // تم زيادة وقت الانتظار بين العقبات قليلاً لكي لا تزدحم الشاشة بالسرعة الجديدة
+            nextSpawnTime = time + Phaser.Math.Between(900, 1400);
         }
 
         cloudsGroup.children.iterate(function (cloud) { if (cloud && cloud.x < -120) cloud.destroy(); });
@@ -183,12 +187,9 @@
     function hasAllItems() { return (collectedItems.arduino >= TARGET_COUNT && collectedItems.sensor >= TARGET_COUNT && collectedItems.pump >= TARGET_COUNT); }
     function collectItem(player, item) { let type = item.itemType; item.destroy(); if (type === 'arduino_board') collectedItems.arduino++; if (type === 'sensor_module') collectedItems.sensor++; if (type === 'water_pump') collectedItems.pump++; AudioSynth.playGoalScore(); updateHUD(); }
     
-    // ==========================================
-    // 2️⃣ استدعاء الكأس الجديد مع تصغير الحجم ليتناسب
-    // ==========================================
     function spawnCertificate(scene) { 
         certificate = scene.physics.add.sprite(920, 315, 'world_cup_trophy'); 
-        certificate.setScale(0.15); // يمكنك زيادة الرقم أو إنقاصه للتحكم بحجم الكأس عند ظهوره
+        certificate.setScale(0.15); 
         certificate.body.allowGravity = false; 
         certificate.setVelocityX(gameSpeed); 
         scene.physics.add.overlap(player, certificate, winGame, null, scene); 
@@ -225,8 +226,6 @@
         g.clear(); g.fillStyle(0xeab308); g.fillRect(2, 26, 24, 4); g.fillStyle(0xf97316); g.beginPath(); g.moveTo(14, 0); g.lineTo(22, 26); g.lineTo(6, 26); g.closePath(); g.fill(); g.fillStyle(0xffffff); g.fillRect(10, 12, 8, 4); g.generateTexture('cone_hazard', 28, 30);
         g.clear(); g.fillStyle(0x1e293b); g.fillRect(4, 4, 24, 24); g.fillStyle(0xeab308); g.fillRect(8, 10, 16, 4); g.fillStyle(0x22c55e); g.fillCircle(10, 22, 2); g.fillCircle(22, 22, 2); g.fillStyle(0x0f172a); g.fillRect(2, 28, 28, 4); g.generateTexture('patrol_robot', 32, 32);
         g.clear(); g.fillStyle(0xffffff, 0.4); g.fillCircle(20, 20, 15); g.fillCircle(40, 15, 18); g.fillCircle(60, 20, 15); g.fillRect(20, 15, 40, 15); g.generateTexture('neon_cloud', 80, 40);
-        
-        // 3️⃣ تم حذف دالة الرسم البرمجي للشهادة القديمة بالكامل من هنا
     }
 </script>
 </body>
